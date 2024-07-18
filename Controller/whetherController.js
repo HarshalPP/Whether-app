@@ -89,7 +89,8 @@ async function findCity(ip) {
         res.send(await weather(city.addressLocality))
 
     }catch(error){
-        res.status(500).json('Internal Server Error')
+        console.log(error)
+        res.status(500).json('Internal Server Error' , error)
     }
   }
 

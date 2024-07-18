@@ -83,13 +83,17 @@ async function findCity(ip) {
 
 
 
-  exports.WhetherIp = async(req,res)=>{
-    try{
-        const city = await findCity(req.ip)
-        res.send(await weather(city.addressLocality))
-
-    }catch(error){
-        res.status(500).json('Internal Server Error' )
+  exports.WhetherIp = async (req, res) => {
+    try {
+        const city = await findCity(req.ip);
+        res.send(await weather(city.addressLocality));
+    } catch (error) {
+        console.error(error);  // Log the error for server-side debugging
+        res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message,
+            stack: error.stack
+        });
     }
-  }
+};
 

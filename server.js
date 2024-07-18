@@ -64,6 +64,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestIp.mw());
 
+app.get("/" , (req,res)=>{
+    res.send('Api is Running ')
+})
+
 // Routes setup
 app.use('/api/v1/', router);
 

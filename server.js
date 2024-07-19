@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const { ExpressPeerServer } = require('peer');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const cors = require('cors');
@@ -23,28 +24,29 @@ app.set('trust proxy', true);
 const server = http.createServer(app);
 const io = socketIo(server);
 
+const peerServer = ExpressPeerServer(server, {
+    debug: true,
+});
+
+app.use('/peerjs', peerServer);
+
 // socket Connection
-io.on('connection', (socket) => {
-    console.log('New client connected');
+// Socket.io connection
+io.on('connection', socket => {
+    socket.on('join-room', (roomId, userId) => {
+        socket.join(roomId);
+        socket.to(roomId).emit('user-connected', userId);
 
-    socket.emit('welcome', 'Welcome to the chat!');
-
-    socket.on('joinGroup', (groupId) => {
-        socket.join(groupId);
-        console.log(`Client joined group: ${groupId}`);
-    });
-
-    socket.on('chatMessage', (msg) => {
-        io.to(msg.groupId).emit('chatMessage', msg);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
+        socket.on('disconnect', () => {
+            socket.to(roomId).emit('user-disconnected', userId);
+        });
     });
 });
 
 // Static Middleware
-app.use(express.static(path.join(__dirname, 'Frontend')));
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Session setup
 app.use(session({

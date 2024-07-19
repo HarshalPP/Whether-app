@@ -14,6 +14,7 @@
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "exceljs": "^4.4.0",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
@@ -23,8 +24,11 @@
     "node-captcha-generator": "^0.0.1",
     "nodemon": "^3.1.4",
     "path": "^0.12.7",
+    "peer": "^1.0.2",
     "redis": "^4.6.15",
     "request-ip": "^3.3.0",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "twilio": "^5.2.2",
+    "uuid": "^10.0.0"
   }
 }

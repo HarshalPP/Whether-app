@@ -3,7 +3,10 @@ require('dotenv').config()
 
 
 const client = redis.createClient({
-    url:process.env.REDIS_URL
+    url:process.env.REDIS_URL,
+    socket: {
+        connectTimeout: 50000 // Increase the connection timeout to 50 seconds (50000 milliseconds)
+    }
 })
 
 

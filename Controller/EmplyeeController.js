@@ -58,6 +58,7 @@ exports.getEmployee = async (req, res) => {
     try {
         const locale = req.query.locale || 'en'; // Default to 'en'
         i18n.setLocale(locale);
+
         const employees = await Employee.find({});
 
         // Fetch translations for each employee
@@ -67,17 +68,14 @@ exports.getEmployee = async (req, res) => {
 
             return {
                 ...employee.toObject(),
-                Name: nameTranslation,
-                Unit: unitTranslation
+                Name: nameTranslation || employee.Name, // Fallback to original name if translation not found
+                Unit: unitTranslation || employee.Unit  // Fallback to original unit if translation not found
             };
         }));
-
-
 
         res.status(200).json({
             message: true,
             data: employeesWithTranslations,
-
         });
 
     } catch (error) {

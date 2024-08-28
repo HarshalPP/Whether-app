@@ -6,14 +6,14 @@ const peer = new Peer(undefined, {
 });
 
 const videoGrid = document.getElementById('remote-videos');
-const myVideo = document.createElement('video');
-myVideo.muted = true;
+const localVideo = document.getElementById('local-video');
+const peers = {};
 
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
 }).then(stream => {
-    addVideoStream(myVideo, stream);
+    addVideoStream(localVideo, stream);
 
     peer.on('call', call => {
         call.answer(stream);
@@ -26,18 +26,17 @@ navigator.mediaDevices.getUserMedia({
     socket.on('user-connected', userId => {
         connectToNewUser(userId, stream);
     });
+
+    socket.on('user-disconnected', userId => {
+        if (peers[userId]) peers[userId].close();
+    });
 });
 
 peer.on('open', id => {
-    const ROOM_ID = window.location.pathname.substring(1);
+    const ROOM_ID = 'd1435c36-f1ab-49bd-b23a-48558c1db3ce'; // Set dynamically if needed
     socket.emit('join-room', ROOM_ID, id);
 });
 
-socket.on('user-disconnected', userId => {
-    if (peers[userId]) peers[userId].close();
-});
-
-const peers = {};
 function connectToNewUser(userId, stream) {
     const call = peer.call(userId, stream);
     const video = document.createElement('video');

@@ -75,8 +75,6 @@ app.use((req, res, next) => {
     console.log(`Requested language: ${lang}`);
     if (lang && i18n.getLocales().includes(lang)) {
         i18n.setLocale(req, lang);
-    } else {
-        i18n.setLocale(req, i18n.getDefaultLocale());
     }
     console.log(`Current locale: ${i18n.getLocale(req)}`);
     next();

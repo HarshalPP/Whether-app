@@ -1,6 +1,5 @@
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
 const { ExpressPeerServer } = require('peer');
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -9,34 +8,90 @@ const dotenv = require('dotenv');
 const path = require('path');
 const requestIp = require('request-ip');
 const cookieParser = require('cookie-parser');
-const i18n = require("./config/i18Config")
-const translationMiddleware =require("./Middleware/Transltion_middleware")
-const app = express();
-
- 
-
-
-
-// Load environment variables
-dotenv.config();
-
+const jwt = require('jsonwebtoken'); // Ensure jwt is imported
+const i18n = require("./config/i18Config");
+const translationMiddleware =require("./Middleware/Transltion_middleware");
 const connectDB = require('./config/db');
 const router = require('./Route'); // Ensure your route file is named correctly
-const { SuperfaceClient } = require('@superfaceai/one-sdk');
 
 
+dotenv.config();
 
-// cookies middleware
+const app = express();
 
+// Cookies middleware
 app.use(cookieParser());
-
 
 // Proxy configuration for secure cookies
 app.set('trust proxy', true);
 
 // Create HTTP server and attach Socket.io
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = require("socket.io")(server, {
+    allowEIO3: true,
+    cors: {
+        origin: true,
+        methods: ['GET', 'POST'],
+        credentials: true
+    }
+});
+
+// Middleware to verify JWT and set userId on the socket
+io.use(async (socket, next) => {
+    try {
+        const token = socket.handshake.query.token;
+
+        if (token) {
+            console.log("Received Token:", token);
+
+            try {
+                // Attempt to verify the token
+                const payload = await jwt.verify(token, process.env.SECRET);
+                socket.userId = payload.id;
+                console.log("User authenticated with ID:", socket.userId);
+            } catch (verifyError) {
+                // Log the error if token verification fails, but don't block the connection
+                console.warn("Token verification failed:", verifyError.message);
+            }
+        } else {
+            console.log("No token provided, proceeding without authentication.");
+        }
+
+        // Proceed to the next middleware or connection handler
+        next();
+    } catch (err) {
+        console.error("Middleware error:", err.message);
+        next(); // Allow the connection to proceed even if an unexpected error occurs
+    }
+});
+
+
+// Handle Socket.io connections
+// io.on('connection', (socket) => {
+//     console.log(`User connected: ${socket.userId} with socket ID: ${socket.id}`);
+
+//     // Handle user disconnection
+//     socket.on("disconnect", () => {
+//         console.log(`User disconnected: ${socket.userId} with socket ID: ${socket.id}`);
+//     });
+
+//     // Example: Handle custom events from the client
+//     socket.on('custom-event', (data) => {
+//         console.log(`Custom event received from ${socket.userId}:`, data);
+//         // Do something with the received data
+//     });
+// });
+
+
+io.on('connection', (socket) => {
+console.log("connected", +socket.userId)
+
+
+socket.on("disconnect",()=>{
+    console.log("Disconnected: " + socket.userId);
+})
+
+})
 
 // Configure Peer.js server
 const peerServer = ExpressPeerServer(server, {
@@ -44,32 +99,15 @@ const peerServer = ExpressPeerServer(server, {
 });
 app.use('/peerjs', peerServer);
 
-// Handle Socket.io connections
-io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
-
-    socket.on('join-room', (roomId, userId) => {
-        socket.join(roomId);
-        console.log(`User ${userId} joined room ${roomId}`);
-        socket.to(roomId).broadcast.emit('user-connected', userId);
-
-        socket.on('disconnect', () => {
-            console.log('User disconnected:', userId);
-            socket.to(roomId).broadcast.emit('user-disconnected', userId);
-        });
-    });
-});
-
-// Use i18n middleware
 // Use i18n middleware
 app.use(i18n.init);
 
-
+// Example greeting route with i18n
 app.get('/greet', (req, res) => {
     res.send(i18n.__('greeting'));
 });
 
-
+// Middleware to set the locale from query parameter or header
 app.use((req, res, next) => {
     const lang = req.query.lang || req.headers['accept-language'];
     console.log(`Requested language: ${lang}`);
@@ -80,8 +118,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-// Middleware to set the locale from the query parameter or header
 // Use translation middleware
 app.use(translationMiddleware);
 
@@ -113,7 +149,6 @@ app.get('/', (req, res) => {
     res.send('API is running');
 });
 app.use('/api/v1/', router);
-
 
 // Start server and connect to database
 const PORT = process.env.PORT || 5000;

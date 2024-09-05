@@ -9,6 +9,7 @@ const videoRouter = require("./Routes/videoRoutes")
 const StudentRouter = require("./Routes/StudentRouter")
 const OpenAIRouter = require("./Routes/chatRouter")
 const EmplyeeRouter =require("./Routes/EmplyeeRoutes")
+const User=require("./Routes/UserRoomRouter")
 
 
 // Store Router
@@ -21,6 +22,7 @@ app.use('/Video' , videoRouter)
 app.use('/Student', StudentRouter)
 app.use('/ai', OpenAIRouter)
 app.use("/Emplyee",EmplyeeRouter)
+app.use("/User",User)
 
 // 
 

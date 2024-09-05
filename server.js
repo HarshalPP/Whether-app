@@ -46,7 +46,7 @@ io.use(async (socket, next) => {
 
             try {
                 // Attempt to verify the token
-                const payload = await jwt.verify(token, process.env.SECRET);
+                const payload = await jwt.verify(token,  process.env.JWT_SECRET || 'MYKEY');
                 socket.userId = payload.id;
                 console.log("User authenticated with ID:", socket.userId);
             } catch (verifyError) {

@@ -11,6 +11,7 @@ const OpenAIRouter = require("./Routes/chatRouter")
 const EmplyeeRouter =require("./Routes/EmplyeeRoutes")
 const User=require("./Routes/UserRoomRouter")
 const ChatRoom=require("./Routes/chatroom")
+const RocketReach=require("./Routes/RockerReachRouter")
 
 
 // Store Router
@@ -25,6 +26,7 @@ app.use('/ai', OpenAIRouter)
 app.use("/Emplyee",EmplyeeRouter)
 app.use("/User",User)
 app.use("/ChatRoom",ChatRoom)
+app.use("/RocketReach",RocketReach)
 // 
 
 module.exports = app;

@@ -2,7 +2,7 @@ const OpenAI = require('openai');
 
 // Initialize the OpenAI client
 const openai = new OpenAI({
-  apiKey: 'sk-proj-gxlmkJeO87jyHvb88d21T3BlbkFJu9af95fdHihURL7BtE9Q', // Replace with your actual API key
+  apiKey: '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', // Replace with your actual API key
 });
 
 exports.createCompletion = async (req, res) => {
@@ -11,7 +11,7 @@ exports.createCompletion = async (req, res) => {
    console.log(msg)
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: msg }],
+      messages: [{ role: "user", content: msg }],
       max_tokens: 100 // Example token limit, adjust as needed
 
     });

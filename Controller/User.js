@@ -5,6 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const csv = require('csvtojson');
+const client=require("../config/redis")
 
 
 
@@ -38,51 +39,73 @@ exports.upload = multer({
 // Make a api for pagination with search and filter
 
 exports.getUsers = async (req, res) => {
+    try {
+        // Extract search query
+        const search = req.query.search || '';
 
-    try{
-        search = '';
-        if(req.query.search){
-            search = req.query.search;
+        // Query the database for users
+        const query = {
+            $or: [
+                { name: { $regex: '.*' + search + '.*', $options: 'i' } },
+                { location: { $regex: '.*' + search + '.*', $options: 'i' } }
+            ]
+        };
+        
+        // Create a unique cache key based on the query
+        const cacheKey = `users:${search}`;
+
+        
+        // Check if the data is cached
+        const cachedData = await client.get(cacheKey);
+        if (cachedData) {
+            // Return cached data if available
+            return res.status(200).json(JSON.parse(cachedData));
         }
 
-        const finddata = await UserDemis.find({
-            $or:[
-                {name:{
-                    $regex:'.*' + search + '.*', $options:'i'
-                }},
-                {
-                    location:{
-                        $regex:'.*' + search + '.*', $options:'i'
-                    
-                    }
-                }
-            ]
-        })
-        res.json(finddata);
+        // Fetch data from the database if not cached
+        const users = await UserDemis.find(query);
 
-    }catch(err){
+        // Cache the data with an expiration time (e.g., 3600 seconds = 1 hour)
+        await client.set(cacheKey, JSON.stringify(users), {
+            EX: 3600
+        });
+
+        // Return the fetched data
+        res.status(200).json(users);
+    } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
     }
-
-}
-
+};
 
 
-exports.createUser=async(req,res)=>{
-    try{
-        const {name,lastname} = req.body;
+
+
+exports.createUser = async (req, res) => {
+    try {
+        const { name, lastname } = req.body;
+
+        // Create a new user and save it to the database
         const newUser = new UserDemis({
             name,
             lastname
         });
         await newUser.save();
-        res.json(newUser);
-    }catch(err){
+
+        // Invalidate the cache
+        const  searchQuery = newUser || ''; // Invalidate cache based on the new user's name
+        const cacheKey = `users:${searchQuery}`;
+        await client.del(cacheKey); // Remove the cache entry associated with the search query
+
+        console.log(cacheKey , "cacheKey")
+      
+        // Return the newly created user
+        res.status(201).json(newUser);
+    } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
     }
-}
+};
 
 
 exports.exportExcel = async (req, res) => {

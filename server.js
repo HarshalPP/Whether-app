@@ -187,7 +187,7 @@ app.get('/', (req, res) => {
     res.send('API is running');
 });
 app.use('/api/v1/', router);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Start server and connect to database
 const PORT = process.env.PORT || 5000;
@@ -197,7 +197,7 @@ connectDB()
         console.log('Database connected');
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
-            console.log('Swagger Docs are available at https://whether-app-woad.vercel.app/api-docs');
+            console.log('Swagger Docs are available at https://whether-app-woad.vercel.app/api/v1/api-docs');
         });
     })
     .catch((error) => {

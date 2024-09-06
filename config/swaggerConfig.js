@@ -16,11 +16,11 @@ const swaggerOptions = {
     servers: [
       {
         url: 'https://whether-app-woad.vercel.app/', // Server URL for the API
-        description: 'Development server',
+          description: 'Development server',
       },
     ],
   },
-  apis: ['./Routes/*.js'], // Add paths to your route files for Swagger to read annotations
+  apis: ['Routes/*.js'], // Add paths to your route files for Swagger to read annotations
 };
 
 // Initialize Swagger JSDoc

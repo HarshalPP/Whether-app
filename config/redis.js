@@ -1,23 +1,27 @@
-const redis = require('redis')
-require('dotenv').config()
+// Import the Redis client
+const { createClient } = require('redis');
+require('dotenv').config(); // Load environment variables from .env file
 
+// Create a Redis client using environment variables
+const client = createClient({
+  url: process.env.REDIS_URL, // Ensure this URL is correctly set on Vercel
+  socket: {
+    connectTimeout: 100000, // Increase the connection timeout if needed
+  },
+});
 
-const client = redis.createClient({
-    url:process.env.REDIS_URL,
-    socket: {
-        connectTimeout: 50000 // Increase the connection timeout to 50 seconds (50000 milliseconds)
-    }
-})
+// Handle Redis connection errors
+client.on('error', (err) => {
+  console.error('Redis error:', err);
+});
 
+// Log successful connection
+client.on('connect', () => {
+  console.log('Redis is connected');
+});
 
-client.on('error',(err)=>{
-    console.error('Redis error' , err)
-})
-
-client.on('connect',()=>{
-    console.log('Redis is connected')
-})
-
+// Connect the client
 client.connect();
 
-module.exports = client
+// Export the client for use in other parts of your application
+module.exports = client;

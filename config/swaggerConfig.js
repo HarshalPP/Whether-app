@@ -15,7 +15,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:5000/', // Server URL for the API
+        url: 'https://whether-app-woad.vercel.app/', // Server URL for the API
       },
     ],
   },

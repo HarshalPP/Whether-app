@@ -187,7 +187,17 @@ app.get('/', (req, res) => {
     res.send('API is running');
 });
 app.use('/api/v1/', router);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Middleware to disable caching for Swagger docs
+app.use('/api-docs', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+  }, swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+  
 
 // Start server and connect to database
 const PORT = process.env.PORT || 5000;

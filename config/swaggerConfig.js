@@ -20,7 +20,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['Routes/*.js'], // Add paths to your route files for Swagger to read annotations
+  apis: ['./Routes/*.js'], // Add paths to your route files for Swagger to read annotations
 };
 
 // Initialize Swagger JSDoc

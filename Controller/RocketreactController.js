@@ -1,7 +1,8 @@
 const {lookupPerson} =require("../Models/RocketReach")
 const session = require('express-session');
+const fs = require('fs');
+const path = require('path');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-
 
 exports.getPerson = async (req, res) => {
   const { ...restQueryParams } = req.body;
@@ -93,138 +94,176 @@ exports.exportSessionData = (req, res) => {
 
 
 
-  // Set up CSV Writer with all the additional headers
-  const csvWriter = createCsvWriter({
-    path: 'exported_data.csv', // File path where the CSV will be saved
-    header: [
-      { id: 'Name', title: 'Name' },
-      { id: 'CurrentEmployer', title: 'Current Employer' },
-      { id: 'LinkedInURL', title: 'LinkedIn URL' },
-      { id: 'Email', title: 'Email' },
-      { id: 'Location', title: 'Location' },
-      { id: 'CurrentTitle', title: 'Current Title' },
-      { id: 'Skills', title: 'Skills' },
-      { id: 'BirthYear', title: 'Birth Year' },
-      { id: 'City', title: 'City' },
-      { id: 'CompanyCity', title: 'Company City' },
-      { id: 'CompanyCountryCode', title: 'Company Country Code' },
-      { id: 'CompanyDomain', title: 'Company Domain' },
-      { id: 'CompanyEmail', title: 'Company Email' },
-      { id: 'CompanyFundingMax', title: 'Company Funding Max' },
-      { id: 'CompanyFundingMin', title: 'Company Funding Min' },
-      { id: 'CompanyID', title: 'Company ID' },
-      { id: 'CompanyIndustry', title: 'Company Industry' },
-      { id: 'CompanyIntent', title: 'Company Intent' },
-      { id: 'CompanyList', title: 'Company List' },
-      { id: 'CompanyNaicsCode', title: 'Company Naics Code' },
-      { id: 'CompanyName', title: 'Company Name' },
-      { id: 'CompanyPostalCode', title: 'Company Postal Code' },
-      { id: 'CompanyPubliclyTraded', title: 'Company Publicly Traded' },
-      { id: 'CompanyRegion', title: 'Company Region' },
-      { id: 'CompanyRevenue', title: 'Company Revenue' },
-      { id: 'CompanyRevenueMax', title: 'Company Revenue Max' },
-      { id: 'CompanyRevenueMin', title: 'Company Revenue Min' },
-      { id: 'CompanySicCode', title: 'Company Sic Code' },
-      { id: 'CompanySize', title: 'Company Size' },
-      { id: 'ExcludeCompanySize', title: 'Exclude Company Size' },
-      { id: 'CompanySizeMax', title: 'Company Size Max' },
-      { id: 'ExcludeCompanySizeMax', title: 'Exclude Company Size Max' },
-      { id: 'CompanySizeMin', title: 'Company Size Min' },
-      { id: 'ExcludeCompanySizeMin', title: 'Exclude Company Size Min' },
-      { id: 'CountryCode', title: 'Country Code' },
-      { id: 'EducationLevel', title: 'Education Level' },
-      { id: 'EmailStatus', title: 'Email Status' },
-      { id: 'ExcludeEmailStatus', title: 'Exclude Email Status' },
-      { id: 'Gender', title: 'Gender' },
-      { id: 'JobFunction', title: 'Job Function' },
-      { id: 'ExcludeJobFunction', title: 'Exclude Job Function' },
-      { id: 'JobTitle', title: 'Job Title' },
-      { id: 'ExcludeJobTitle', title: 'Exclude Job Title' },
-      { id: 'LocationType', title: 'Location Type' },
-      { id: 'PhoneStatus', title: 'Phone Status' },
-      { id: 'ProfileImage', title: 'Profile Image' },
-      { id: 'School', title: 'School' },
-      { id: 'ExcludeSkills', title: 'Exclude Skills' },
-      { id: 'State', title: 'State' },
-      { id: 'WorkEmail', title: 'Work Email' },
-      { id: 'ExcludeWorkEmail', title: 'Exclude Work Email' },
-      { id: 'YearsExperience', title: 'Years Experience' },
-      { id: 'YearsExperienceMax', title: 'Years Experience Max' },
-      { id: 'YearsExperienceMin', title: 'Years Experience Min' }
-    ]
-  });
+// Define the initial desired file path
+let filePath = 'exported_data.csv';
 
-  // Formatting the session data into the expected structure for CSV
-  const formattedData = profiles.map(profile => ({
-    Name: (profile.name || '').padEnd(20, ' '), // Padding example
-    CurrentEmployer: (profile.current_employer || '').padEnd(20, ' '),
-    LinkedInURL: profile.linkedin_url || '',
-    Email: profile.teaser.emails || '',
-    Location: profile.location || '',
-    CurrentTitle: profile.current_title || '',
-    Skills: profile.skills || '',
-    BirthYear: profile.birth_year || '',
-    City: profile.city || '',
-    CompanyCity: profile.companyCity || '',
-    CompanyCountryCode: profile.country_code || '',
-    CompanyDomain: profile.current_employer_domain || '',
-    CompanyEmail: profile.CompanyEmail || '',
-    CompanyFundingMax: profile.CompanyFundingMax || '',
-    CompanyFundingMin: profile.CompanyFundingMin || '',
-    CompanyID: profile.CompanyID || '',
-    CompanyIndustry: profile.CompanyIndustry || '',
-    CompanyIntent: profile.CompanyIntent || '',
-    CompanyList: profile.CompanyList || '',
-    CompanyNaicsCode: profile.CompanyNaicsCode || '',
-    CompanyName: profile.CompanyName || '',
-    CompanyPostalCode: profile.CompanyPostalCode || '',
-    CompanyPubliclyTraded: profile.CompanyPubliclyTraded || '',
-    CompanyRegion: profile.CompanyRegion || '',
-    CompanyRevenue: profile.CompanyRevenue || '',
-    CompanyRevenueMax: profile.CompanyRevenueMax || '',
-    CompanyRevenueMin: profile.CompanyRevenueMin || '',
-    CompanySicCode: profile.CompanySicCode || '',
-    CompanySize: profile.CompanySize || '',
-    ExcludeCompanySize: profile.ExcludeCompanySize || '',
-    CompanySizeMax: profile.CompanySizeMax || '',
-    ExcludeCompanySizeMax: profile.ExcludeCompanySizeMax || '',
-    CompanySizeMin: profile.CompanySizeMin || '',
-    ExcludeCompanySizeMin: profile.ExcludeCompanySizeMin || '',
-    CountryCode: profile.countryCode || '',
-    EducationLevel: profile.EducationLevel || '',
-    EmailStatus: profile.EmailStatus || '',
-    ExcludeEmailStatus: profile.ExcludeEmailStatus || '',
-    Gender: profile.Gender || '',
-    JobFunction: profile.JobFunction || '',
-    ExcludeJobFunction: profile.ExcludeJobFunction || '',
-    JobTitle: profile.jobTitle || '',
-    ExcludeJobTitle: profile.ExcludeJobTitle || '',
-    LocationType: profile.LocationType || '',
-    PhoneStatus: profile.PhoneStatus || '',
-    ProfileImage: profile.profileImage || '',
-    School: profile.school || '',
-    ExcludeSkills: profile.ExcludeSkills || '',
-    State: profile.state || '',
-    WorkEmail: profile.WorkEmail || '',
-    ExcludeWorkEmail: profile.ExcludeWorkEmail || '',
-    YearsExperience: profile.years_experience || '',
-    YearsExperienceMax: profile.YearsExperienceMax || '',
-    YearsExperienceMin: profile.YearsExperienceMin || ''
-  }));
-
-
-  // Write data to CSV file
-  csvWriter.writeRecords(formattedData)
-    .then(() => {
-      console.log('CSV file written successfully');
-      // Send the CSV file to the client for download
-      res.download('exported_data.csv');
-    })
-    .catch(error => {
-      console.error('Error writing CSV file:', error);
-      res.status(500).send('Error exporting data');
-    });
+// Function to check if a directory is writable
+const isWritable = (dir) => {
+  try {
+    fs.accessSync(dir, fs.constants.W_OK);
+    return true;
+  } catch (err) {
+    return false;
+  }
 };
 
+// Function to ensure a directory exists and is writable; if not, it creates the directory
+const ensureDirectoryExists = (dir) => {
+  if (!fs.existsSync(dir)) {
+    try {
+      fs.mkdirSync(dir, { recursive: true }); // Create the directory if it does not exist
+    } catch (error) {
+      console.error(`Failed to create directory ${dir}:`, error);
+      return false;
+    }
+  }
+  return isWritable(dir);
+};
 
+// Extract the directory from the file path
+const directory = path.dirname(filePath);
 
+// Check if the target directory is writable, create it if necessary
+if (!ensureDirectoryExists(directory)) {
+  console.warn(`Directory is not writable, switching to /tmp`);
+
+  // Fallback to a writable directory like /tmp
+  filePath = path.join('/tmp', 'exported_data.csv');
+
+  // Check again if the fallback path is writable
+  if (!ensureDirectoryExists('/tmp')) {
+    throw new Error('No writable directory available for saving the CSV file.');
+  }
+}
+
+// Create CSV writer
+const csvWriter = createCsvWriter({
+  path: filePath,
+  header: [
+    { id: 'Name', title: 'Name' },
+    { id: 'CurrentEmployer', title: 'Current Employer' },
+    { id: 'LinkedInURL', title: 'LinkedIn URL' },
+    { id: 'Email', title: 'Email' },
+    { id: 'Location', title: 'Location' },
+    { id: 'CurrentTitle', title: 'Current Title' },
+    { id: 'Skills', title: 'Skills' },
+    { id: 'BirthYear', title: 'Birth Year' },
+    { id: 'City', title: 'City' },
+    { id: 'CompanyCity', title: 'Company City' },
+    { id: 'CompanyCountryCode', title: 'Company Country Code' },
+    { id: 'CompanyDomain', title: 'Company Domain' },
+    { id: 'CompanyEmail', title: 'Company Email' },
+    { id: 'CompanyFundingMax', title: 'Company Funding Max' },
+    { id: 'CompanyFundingMin', title: 'Company Funding Min' },
+    { id: 'CompanyID', title: 'Company ID' },
+    { id: 'CompanyIndustry', title: 'Company Industry' },
+    { id: 'CompanyIntent', title: 'Company Intent' },
+    { id: 'CompanyList', title: 'Company List' },
+    { id: 'CompanyNaicsCode', title: 'Company Naics Code' },
+    { id: 'CompanyName', title: 'Company Name' },
+    { id: 'CompanyPostalCode', title: 'Company Postal Code' },
+    { id: 'CompanyPubliclyTraded', title: 'Company Publicly Traded' },
+    { id: 'CompanyRegion', title: 'Company Region' },
+    { id: 'CompanyRevenue', title: 'Company Revenue' },
+    { id: 'CompanyRevenueMax', title: 'Company Revenue Max' },
+    { id: 'CompanyRevenueMin', title: 'Company Revenue Min' },
+    { id: 'CompanySicCode', title: 'Company Sic Code' },
+    { id: 'CompanySize', title: 'Company Size' },
+    { id: 'ExcludeCompanySize', title: 'Exclude Company Size' },
+    { id: 'CompanySizeMax', title: 'Company Size Max' },
+    { id: 'ExcludeCompanySizeMax', title: 'Exclude Company Size Max' },
+    { id: 'CompanySizeMin', title: 'Company Size Min' },
+    { id: 'ExcludeCompanySizeMin', title: 'Exclude Company Size Min' },
+    { id: 'CountryCode', title: 'Country Code' },
+    { id: 'EducationLevel', title: 'Education Level' },
+    { id: 'EmailStatus', title: 'Email Status' },
+    { id: 'ExcludeEmailStatus', title: 'Exclude Email Status' },
+    { id: 'Gender', title: 'Gender' },
+    { id: 'JobFunction', title: 'Job Function' },
+    { id: 'ExcludeJobFunction', title: 'Exclude Job Function' },
+    { id: 'JobTitle', title: 'Job Title' },
+    { id: 'ExcludeJobTitle', title: 'Exclude Job Title' },
+    { id: 'LocationType', title: 'Location Type' },
+    { id: 'PhoneStatus', title: 'Phone Status' },
+    { id: 'ProfileImage', title: 'Profile Image' },
+    { id: 'School', title: 'School' },
+    { id: 'ExcludeSkills', title: 'Exclude Skills' },
+    { id: 'State', title: 'State' },
+    { id: 'WorkEmail', title: 'Work Email' },
+    { id: 'ExcludeWorkEmail', title: 'Exclude Work Email' },
+    { id: 'YearsExperience', title: 'Years Experience' },
+    { id: 'YearsExperienceMax', title: 'Years Experience Max' },
+    { id: 'YearsExperienceMin', title: 'Years Experience Min' }
+  ]
+});
+
+// Formatting the session data into the expected structure for CSV
+const formattedData = profiles.map(profile => ({
+  Name: (profile.name || '').padEnd(20, ' '), // Padding example
+  CurrentEmployer: (profile.current_employer || '').padEnd(20, ' '),
+  LinkedInURL: profile.linkedin_url || '',
+  Email: profile.teaser.emails || '',
+  Location: profile.location || '',
+  CurrentTitle: profile.current_title || '',
+  Skills: profile.skills || '',
+  BirthYear: profile.birth_year || '',
+  City: profile.city || '',
+  CompanyCity: profile.companyCity || '',
+  CompanyCountryCode: profile.country_code || '',
+  CompanyDomain: profile.current_employer_domain || '',
+  CompanyEmail: profile.CompanyEmail || '',
+  CompanyFundingMax: profile.CompanyFundingMax || '',
+  CompanyFundingMin: profile.CompanyFundingMin || '',
+  CompanyID: profile.CompanyID || '',
+  CompanyIndustry: profile.CompanyIndustry || '',
+  CompanyIntent: profile.CompanyIntent || '',
+  CompanyList: profile.CompanyList || '',
+  CompanyNaicsCode: profile.CompanyNaicsCode || '',
+  CompanyName: profile.CompanyName || '',
+  CompanyPostalCode: profile.CompanyPostalCode || '',
+  CompanyPubliclyTraded: profile.CompanyPubliclyTraded || '',
+  CompanyRegion: profile.CompanyRegion || '',
+  CompanyRevenue: profile.CompanyRevenue || '',
+  CompanyRevenueMax: profile.CompanyRevenueMax || '',
+  CompanyRevenueMin: profile.CompanyRevenueMin || '',
+  CompanySicCode: profile.CompanySicCode || '',
+  CompanySize: profile.CompanySize || '',
+  ExcludeCompanySize: profile.ExcludeCompanySize || '',
+  CompanySizeMax: profile.CompanySizeMax || '',
+  ExcludeCompanySizeMax: profile.ExcludeCompanySizeMax || '',
+  CompanySizeMin: profile.CompanySizeMin || '',
+  ExcludeCompanySizeMin: profile.ExcludeCompanySizeMin || '',
+  CountryCode: profile.countryCode || '',
+  EducationLevel: profile.EducationLevel || '',
+  EmailStatus: profile.EmailStatus || '',
+  ExcludeEmailStatus: profile.ExcludeEmailStatus || '',
+  Gender: profile.Gender || '',
+  JobFunction: profile.JobFunction || '',
+  ExcludeJobFunction: profile.ExcludeJobFunction || '',
+  JobTitle: profile.jobTitle || '',
+  ExcludeJobTitle: profile.ExcludeJobTitle || '',
+  LocationType: profile.LocationType || '',
+  PhoneStatus: profile.PhoneStatus || '',
+  ProfileImage: profile.profileImage || '',
+  School: profile.school || '',
+  ExcludeSkills: profile.ExcludeSkills || '',
+  State: profile.state || '',
+  WorkEmail: profile.WorkEmail || '',
+  ExcludeWorkEmail: profile.ExcludeWorkEmail || '',
+  YearsExperience: profile.years_experience || '',
+  YearsExperienceMax: profile.YearsExperienceMax || '',
+  YearsExperienceMin: profile.YearsExperienceMin || ''
+}));
+
+// Write data to CSV file
+csvWriter.writeRecords(formattedData)
+  .then(() => {
+    console.log(`CSV file saved successfully at ${filePath}`);
+    // Send the CSV file to the client for download
+    res.download(filePath);
+  })
+  .catch(error => {
+    console.error('Error writing CSV file:', error);
+    res.status(500).send('Error exporting data');
+  });
+}

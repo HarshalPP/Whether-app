@@ -107,11 +107,21 @@
 
 <body>
   <div id="content">
-    <form id="searchForm" style="margin-bottom: 20px;">
-      <input type="text" name="query" id="queryInput" placeholder="Enter your search query..." required
-        style="padding: 8px; width: 300px;">
-      <button type="submit" style="padding: 8px;">Search</button>
-    </form>
+
+    
+
+    <div style="display: flex; justify-content: space-between;">
+      <form id="searchForm" style="margin-bottom: 20px;">
+        <input type="text" name="query" id="queryInput" placeholder="Enter your search query..." required
+          style="padding: 8px; width: 300px;">
+        <button type="submit" style="padding: 8px;">Search</button>
+        
+      </form>
+     
+      <!-- Export Button -->
+     <button id="exportButton" style="padding: 8px; margin-bottom: 20px;" onclick="myFunction()">Export Data</button>
+    </div>
+
 
     <table style="border: 1px solid gray;">
       <thead>
@@ -288,7 +298,36 @@
         loaderOverlay.style.display = 'none';
         content.classList.remove('blur');
       }
+      
+
     });
+
+    async function myFunction() {
+  try {
+    // Fetch the API response using fetch
+    const response = await fetch('/api/v1/RocketReach/export', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // Check if the response is OK (status code in the range 200-299)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the JSON response
+    const result = await response.json();
+    console.log(result); // Handle the parsed response data here
+
+  } catch (error) {
+    // Handle errors
+    console.error('Error fetching the data:', error.message);
+  }
+}
+
+
   </script>
 </body>
 

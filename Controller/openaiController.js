@@ -2,9 +2,9 @@ const OpenAI = require('openai');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const session = require("express-session")
-const genAI = new GoogleGenerativeAI('AIzaSyCMDfHEmxb5Q34peejGWPPbqBhv70YHOuY');
-
+const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMNI);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
 
 
 

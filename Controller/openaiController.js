@@ -1,6 +1,7 @@
 const OpenAI = require('openai');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const session = require("express-session")
 const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMNI);
 
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -124,7 +125,7 @@ Return the response in JSON format as shown above.`,
 
 
 
-const fetchRocketReachData = async (queryParams) => {
+const fetchRocketReachData = async (queryParams ,req ) => {
   console.log("Params data type is ", typeof queryParams);
 
   let cleanedParams = queryParams;
@@ -226,12 +227,21 @@ const fetchRocketReachData = async (queryParams) => {
 
       {
         headers: {
-          Authorization: '1597434k5731585966a9ff8692a5009a9624defa', 
+          Authorization: '1597c9ck32ec2870ee39f66029dde40e9905a867', 
           'Content-Type': 'application/json'
         }
       }
     );
     console.log("Response-------->>>>>", response.data);
+
+      // Check if req.session is available before accessing it
+      if (req && req.session) {
+        req.session.data = response.data;
+      } else {
+        console.warn('Session is not available.');
+      }
+
+   // Ensure the `req` object has a session
     return response.data;
 
   } catch (error) {
@@ -274,12 +284,13 @@ exports.searchWithOpenAI = async (req, res) => {
 
     const firstPart = geminiQuery[0]?.content?.parts?.[0]?.text || '';
 
-    const data = await fetchRocketReachData(firstPart);
+    const data = await fetchRocketReachData(firstPart , req);
 
-    res.status(200).json({ data: data });
+    return res.status(200).json({ data: data });
+    return res.render('user', {formdata:data})
   } catch (error) {
     console.error("Error in searchWithOpenAI:", error);
-    res.status(500).send(error.message);
+    return res.status(500).send(error.message);
   }
 };
 

@@ -70,7 +70,7 @@ exports.lookupPerson = async (queryParams) => {
       },
       {
         headers: {
-          Authorization: '1594a7ek7b8180660f3cdc584dc794adc7e8777b', // Correct format with the API key
+          Authorization: '1597434k5731585966a9ff8692a5009a9624defa', // Correct format with the API key
           'Content-Type': 'application/json',
         },
       }

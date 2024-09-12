@@ -36,7 +36,6 @@ app.use(session({
     saveUninitialized: false, // Set to false if you don't need to save uninitialized sessions
     cookie: { 
         secure: false, // Set to true if using HTTPS
-        maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
     }
 }));
 // Create HTTP server and attach Socket.io

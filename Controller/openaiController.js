@@ -111,7 +111,7 @@ Return the response in JSON format as shown above.`,
       ],
     });
 
-    console.log("Result:", result);
+
 
     // Adjust based on actual response structure
     const completionText = result?.response?.candidates || [];
@@ -126,7 +126,7 @@ Return the response in JSON format as shown above.`,
 
 
 const fetchRocketReachData = async (queryParams ,req ) => {
-  console.log("Params data type is ", typeof queryParams);
+
 
   let cleanedParams = queryParams;
   if (typeof queryParams === 'string') {
@@ -140,12 +140,12 @@ const fetchRocketReachData = async (queryParams ,req ) => {
     }
   }
 
-  console.log("Parsed Params data is ", queryParams);
+ 
 
   // Format the `query` field correctly
   const formattedQuery = typeof queryParams.query === 'object' ? queryParams.query : {};
 
-  console.log("company_city value is", queryParams.company_city);
+  
 
 
   const formatField = (value, isArray = false, forceArray = false) => {
@@ -212,10 +212,7 @@ const fetchRocketReachData = async (queryParams ,req ) => {
     },
   };
   
-  console.log('Formatted params are', formattedParams);
-  
 
-  console.log("Formatted params are", formattedParams);
 
 
    
@@ -232,7 +229,7 @@ const fetchRocketReachData = async (queryParams ,req ) => {
         }
       }
     );
-    console.log("Response-------->>>>>", response.data);
+
 
       // Check if req.session is available before accessing it
       if (req && req.session) {

@@ -5,11 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"nodemon server.js"
+    "start": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.17.2",
+    "@huggingface/inference": "^2.8.0",
     "@superfaceai/one-sdk": "^2.4.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",

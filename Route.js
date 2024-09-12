@@ -12,6 +12,7 @@ const EmplyeeRouter =require("./Routes/EmplyeeRoutes")
 const User=require("./Routes/UserRoomRouter")
 const ChatRoom=require("./Routes/chatroom")
 const RocketReach=require("./Routes/RockerReachRouter")
+const indexRouter = require("./Routes/indexRouter")
 
 
 // Store Router
@@ -27,6 +28,7 @@ app.use("/Emplyee",EmplyeeRouter)
 app.use("/User",User)
 app.use("/ChatRoom",ChatRoom)
 app.use("/RocketReach",RocketReach)
+app.use("/HTML", indexRouter)
 // 
 
 module.exports = app;

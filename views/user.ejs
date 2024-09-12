@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Panel</title>
+  <link rel="stylesheet" href="/css/style.css"> <!-- Corrected the path to the CSS file -->
+  <style>
+    /* File: /css/style.css */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+}
+
+td a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+td a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+  th, td {
+    padding: 6px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <table style="border: 1px solid gray;">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Current Employer</th>
+        <th>LinkedIn URL</th>
+        <th>Email</th>
+        <th>Location</th>
+        <th>Current Title</th>
+        <th>Skills</th>
+        <th>Birth Year</th>
+        <th>City</th>
+        <th>Company City</th>
+        <th>Company Country Code</th>
+        <th>Company Domain</th>
+        <th>Company Email</th>
+        <th>Company Funding Max</th>
+        <th>Company Funding Min</th>
+        <th>Company ID</th>
+        <th>Company Industry</th>
+        <th>Company Intent</th>
+        <th>Company List</th>
+        <th>Company Naics Code</th>
+        <th>Company Name</th>
+        <th>Company Postal Code</th>
+        <th>Company Publicly Traded</th>
+        <th>Company Region</th>
+        <th>Company Revenue</th>
+        <th>Company Revenue Max</th>
+        <th>Company Revenue Min</th>
+        <th>Company Sic Code</th>
+        <th>Company Size</th>
+        <th>Exclude Company Size</th>
+        <th>Company Size Max</th>
+        <th>Exclude Company Size Max</th>
+        <th>Company Size Min</th>
+        <th>Exclude Company Size Min</th>
+        <th>Country Code</th>
+        <th>Education Level</th>
+        <th>Email Status</th>
+        <th>Exclude Email Status</th>
+        <th>Gender</th>
+        <th>Job Function</th>
+        <th>Exclude Job Function</th>
+        <th>Job Title</th>
+        <th>Exclude Job Title</th>
+        <th>LinkedIn URL</th>
+        <th>Location Type</th>
+        <th>Phone Status</th>
+        <th>Profile Image</th>
+        <th>School</th>
+        <th>Skills</th>
+        <th>Exclude Skills</th>
+        <th>State</th>
+        <th>Work Email</th>
+        <th>Exclude Work Email</th>
+        <th>Years Experience</th>
+        <th>Years Experience Max</th>
+        <th>Years Experience Min</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% data.forEach(item => { %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= item.current_employer %></td>
+          <td><%= item.linkedin_url %></td>
+          <td><%= item.email %></td>
+          <td><%= item.location %></td>
+          <td><%= item.current_title %></td>
+          <td><%= item.all_skills %></td>
+          <td><%= item.birth_year %></td>
+          <td><%= item.city %></td>
+          <td><%= item.company_city %></td>
+          <td><%= item.company_country_code %></td>
+          <td><%= item.company_domain %></td>
+          <td><%= item.company_email %></td>
+          <td><%= item.company_funding_max %></td>
+          <td><%= item.company_funding_min %></td>
+          <td><%= item.company_id %></td>
+          <td><%= item.company_industry %></td>
+          <td><%= item.company_intent %></td>
+          <td><%= item.company_list %></td>
+          <td><%= item.company_naics_code %></td>
+          <td><%= item.company_name %></td>
+          <td><%= item.company_postal_code %></td>
+          <td><%= item.company_publicly_traded %></td>
+          <td><%= item.region %></td>
+          <td><%= item.revenue %></td>
+          <td><%= item.revenue_max %></td>
+          <td><%= item.revenue_min %></td>
+          <td><%= item.company_sic_code %></td>
+          <td><%= item.company_size %></td>
+          <td><%= item.exclude_company_size %></td>
+          <td><%= item.company_size_max %></td>
+          <td><%= item.exclude_company_size_max %></td>
+          <td><%= item.company_size_min %></td>
+          <td><%= item.exclude_company_size_min %></td>
+          <td><%= item.country_code %></td>
+          <td><%= item.education_level %></td>
+          <td><%= item.email_status %></td>
+          <td><%= item.exclude_email_status %></td>
+          <td><%= item.gender %></td>
+          <td><%= item.job_function %></td>
+          <td><%= item.exclude_job_function %></td>
+          <td><%= item.job_title %></td>
+          <td><%= item.exclude_job_title %></td>
+          <td><%= item.linkedin_url %></td>
+          <td><%= item.location_type %></td>
+          <td><%= item.phone_status %></td>
+          <td><%= item.profile_image %></td>
+          <td><%= item.school %></td>
+          <td><%= item.skills %></td>
+          <td><%= item.exclude_skills %></td>
+          <td><%= item.state %></td>
+          <td><%= item.teaser.emails.map(item=>item) %></td>
+          <td><%= item.exclude_work_email %></td>
+          <td><%= item.years_experience %></td>
+          <td><%= item.years_experience_max %></td>
+          <td><%= item.years_experience_min %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <!-- Client-side script to log the data in the browser console -->
+  <script src="../public/js/script.js"></script>
+</body>
+</html>

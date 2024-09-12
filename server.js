@@ -28,6 +28,17 @@ app.use(cookieParser());
 // Proxy configuration for secure cookies
 app.set('trust proxy', true);
 
+
+// Session setup
+app.use(session({
+    secret: 'KEY-NEW', // Replace with your own secret
+    resave: false,
+    saveUninitialized: false, // Set to false if you don't need to save uninitialized sessions
+    cookie: { 
+        secure: false, // Set to true if using HTTPS
+        maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+    }
+}));
 // Create HTTP server and attach Socket.io
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
@@ -162,17 +173,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session setup
-app.use(session({
-    secret: 'keyboardcat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
-    },
-}));
+
 
 // Middleware setup
 app.use(cors());

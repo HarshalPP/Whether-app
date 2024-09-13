@@ -41,3 +41,24 @@ exports.Taskget = async(req,res)=>{
         })
     }
 }
+
+
+
+exports.Taskdelete = async(req,res)=>{
+    try{
+        const {id}=req.params
+        const Findtask = await Task.findById(id)
+
+        if(!Findtask){
+            return  res.status(404).json('Task is not found to delete')
+        }
+
+        const deleteTask = await Task.findByIdAndDelete(id)
+        return res.status(200).json({
+            Task:deleteTask
+        })
+    }
+    catch(error){
+     return res.status(500).json('Internal Server error')
+    }
+}

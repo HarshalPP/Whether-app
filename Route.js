@@ -13,7 +13,7 @@ const User=require("./Routes/UserRoomRouter")
 const ChatRoom=require("./Routes/chatroom")
 const RocketReach=require("./Routes/RockerReachRouter")
 const indexRouter = require("./Routes/indexRouter")
-
+const TaskRouer = require("./Routes/TaskRoutes")
 
 // Store Router
 app.use('/store', storeRouter);
@@ -29,6 +29,7 @@ app.use("/User",User)
 app.use("/ChatRoom",ChatRoom)
 app.use("/RocketReach",RocketReach)
 app.use("/HTML", indexRouter)
+app.use("/Task", TaskRouer)
 // 
 
 module.exports = app;

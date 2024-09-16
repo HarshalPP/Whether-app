@@ -62,3 +62,35 @@ exports.Taskdelete = async(req,res)=>{
      return res.status(500).json('Internal Server error')
     }
 }
+
+
+
+exports.UpdateTask = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { Title, Type } = req.body;
+  
+      // Find and update the task
+      const updatedTask = await Task.findByIdAndUpdate(
+        id,
+        { Title, Type },
+        { new: true, runValidators: true } // Return the updated document and run validators
+      );
+  
+      // Check if the task was found and updated
+      if (!updatedTask) {
+        return res.status(404).json({ message: 'Task not found or not updated' });
+      }
+  
+      // Success response
+      return res.status(200).json({
+        message: 'Task updated successfully',
+        data: updatedTask,
+      });
+    } catch (error) {
+      // Catch server errors
+      console.error('Error updating task:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  };
+  

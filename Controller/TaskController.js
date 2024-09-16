@@ -94,3 +94,42 @@ exports.UpdateTask = async (req, res) => {
     }
   };
   
+
+  exports.TaskgetwithFilter = async (req, res) => {
+    try {
+      let In_Progress = [];
+      let To_do = [];
+      let Completed = [];
+  
+      // Fetch all tasks
+      const finddata = await Task.find({});
+  
+      if (!finddata || finddata.length === 0) {
+        return res.status(404).json({ message: "No tasks found" });
+      }
+  
+      // Loop through the tasks and categorize based on their type
+      finddata.forEach(task => {
+        if (task.Type === 'Completed') {
+          Completed.push(task);
+        } else if (task.Type === 'In-Progress') {
+          In_Progress.push(task);
+        } else if (task.Type === 'To-do') {
+          To_do.push(task);
+        }
+      });
+  
+      // Return the filtered data
+      return res.status(200).json({
+        Completed,
+        In_Progress,
+        To_do
+      });
+  
+    } catch (error) {
+      return res.status(500).json({
+        error: error.message
+      });
+    }
+  };
+  
